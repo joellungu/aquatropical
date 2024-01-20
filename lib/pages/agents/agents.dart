@@ -28,7 +28,7 @@ class Agents extends GetView<AgentsController> {
       body: controller.obx(
         (state) {
           //
-          List agents = state!;
+          RxList agents = RxList(state!);
           //
           RxString mot = "".obs;
           //

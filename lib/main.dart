@@ -20,6 +20,7 @@ void main() async {
   JournalController journalController = Get.put(JournalController());
   FournisseursController fournisseursController =
       Get.put(FournisseursController());
+
   //
   runApp(const MyApp());
 }

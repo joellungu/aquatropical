@@ -1,12 +1,18 @@
+import 'dart:convert';
+import 'package:aquatropical/pages/expeditions/expeditions_controller.dart';
+import 'package:aquatropical/pages/poissons/poisson_controller.dart';
+import 'package:aquatropical/pages/rapports/journal_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
-import 'nouveau_poisson.dart';
-import 'poisson_controller.dart';
-
-class Poisson extends GetView<PoissonController> {
-  Poisson() {
+class ListPoissons extends GetView<PoissonController> {
+  //
+  ExpeditionController expeditionController = Get.find();
+  //
+  ListPoissons() {
     //
     controller.getAll();
     //
@@ -18,7 +24,7 @@ class Poisson extends GetView<PoissonController> {
       body: controller.obx(
         (state) {
           //
-          RxList poissons = RxList(state!);
+          List poissons = state!;
           //
           RxString mot = "".obs;
           //
@@ -26,7 +32,7 @@ class Poisson extends GetView<PoissonController> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.only(left: 25, right: 25),
+                padding: const EdgeInsets.only(top: 20, left: 25, right: 25),
                 child: TextField(
                   onChanged: (t) {
                     //
@@ -61,6 +67,58 @@ class Poisson extends GetView<PoissonController> {
                             .contains(mot.value.toLowerCase())) {
                           //
                           return ListTile(
+                            onTap: () {
+                              //
+                              TextEditingController quantite =
+                                  TextEditingController();
+                              int qt = poisson['quantite'];
+                              //
+                              Get.dialog(Center(
+                                child: Card(
+                                  elevation: 1,
+                                  child: SizedBox(
+                                    height: 200,
+                                    width: 200,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            "Quantité ($qt)",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          child: TextField(
+                                            controller: quantite,
+                                            autofocus: true,
+                                            keyboardType: TextInputType.number,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            Get.back();
+                                            poisson['quantite'] = quantite.text;
+                                            //
+                                            expeditionController.poissons
+                                                .add(poisson);
+                                          },
+                                          child: const Text("Ajouter"),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ));
+                            },
                             leading: SvgPicture.asset(
                               "assets/FluentEmojiHighContrastTropicalFish.svg",
                               height: 30,
@@ -112,17 +170,6 @@ class Poisson extends GetView<PoissonController> {
             width: 40,
             child: CircularProgressIndicator(),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //
-          Get.to(NouvelPoisson());
-        },
-        child: SvgPicture.asset(
-          "assets/GalaAdd.svg",
-          height: 30,
-          width: 30,
         ),
       ),
     );
